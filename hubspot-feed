@@ -1,0 +1,108 @@
+<div class="container mb20">
+<div id="hubspotPost">
+  <h2 class="text-center mb20">{{ section.settings.title }}</h2>
+</div>
+</div>
+  <style>
+    #hubspotPost .post-item-inner {
+    background: #fff;
+    position: relative;
+    margin: 0 0 30px 0;
+    border: 1px solid #cccccc;
+    padding: 5px;
+      height:100%;
+    }
+       #hubspotPost .post-item {
+    width: 100%;
+         padding 5px;
+         height: 360px;
+         margin:auto;
+       }
+    #hubspotPost .post-detail {
+     padding: 15px 25px;
+    font-size: 15px;
+    line-height: 21px;
+      height:100%;
+    color: #54575a; 
+    }
+    #hubspotPost .post-detail h4{
+        line-height: normal;
+    color: #54575a;
+    margin: 15px 0;
+    font-weight: 700;
+    text-transform: none;
+    font-size: 18px;
+    }
+    .post-item-inner h4.text-center {
+     margin-top:15px; 
+    }
+    h4.post-title.text-center {
+     height: 150px; 
+    }
+  </style>
+<script>
+  $(document).ready(function(){
+    var encoded = btoa("API-KEY").replace('=', '6');
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  $.ajax({
+    //url: "https://api.hubapi.com/content/api/v2/blog-posts?hapikey=demo&updated__gt=1430452800000&content_group_id=351076",
+    method: 'GET',
+    url: proxyurl+"https://api.hubapi.com/content/api/v2/blog-posts?hapikey=APIKEY",
+     headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer API-KEY' 
+  },
+    success: function (result){
+      var resultString = JSON.stringify(result);
+      var parsedResult = JSON.parse(resultString);
+      var objectsT = parsedResult.objects;
+          
+	$.each(objectsT, function( key, value ) {
+      if(value.currently_published == true){
+      var blogTitle = value.name;
+      var urlToPost = value.published_url;
+      var imgUrl = value.featured_image;
+      var postBody = value.post_;
+      $("#hubspotPost").append("<div class='col-lg-3 col-md-3 col-sm-6'><div class='post-item'><div class='post-item-inner'><a href="+ value.published_url + ""+" target='_blank'><img src="+value.featured_image+" class='img-responsive' alt="+ value.featured_image_alt_text +" ></a><h4 class='post-title text-center'>"+ blogTitle +"</h4><div class='post-read-more text-center'>"+"<a href="+value.published_url+""+" target='_blank'>Read More</a></div></div></div></div>");
+      return key < 4;
+      }
+    })
+           },
+    error: function (error){
+     console.log(error + "Error"); 
+    }
+  })
+  })
+</script>
+{% schema %}
+  {
+    "name": "Hubspot feed",
+  
+  
+        "settings": [
+          {
+            "type": "header",
+            "content": "Image"
+          },
+          
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+			"info": "4-6 words maximum"
+          }
+	     ],
+   "presets": [
+    {
+      "name": {
+        "en": "Hubspot Blog Posts"
+      },
+      "category": {
+        "en": "Scripts"
+      }
+    }
+  ]
+	}
+ 
+  
+{% endschema %}
